@@ -41,7 +41,7 @@ PHONE_NUMBER=+5500000000000
   SEND_CAPTION = False       # Enviar legenda junto com a mídia? (True/False)
   NEW_MESSAGE = None         # Mensagem padrão para substituir textos ou legendas
   
-  GRUPOS_ORIGEM = [-1001234567890,...] # lista de grupos a monitorados 
+  GRUPOS_ORIGEM = [-1001234567890,...] # lista de grupos 
   GRUPO_DESTINO = -1009876543210 # grupo destino
 
 ```
