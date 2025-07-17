@@ -1,2 +1,3 @@
 client.session
 .env
+client/client.session-journal

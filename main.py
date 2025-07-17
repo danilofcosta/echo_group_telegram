@@ -20,13 +20,16 @@ GRUPOS: list[int] = [-1001951562774]  # Substitua pelos IDs reais
 GRUPO_DESTINO = -1001795599457        # Substitua pelo ID real do grupo destino
 
 class Config:
-    SEND_TEXT = False  # Enviar texto das mensagens
-    SEND_MEDIA = True
-    SEND_CAPTION = False  # Enviar legenda das mídias
+
     NEW_MESSAGE: Optional[str] = None  # Mensagem padrão para novos textos, se SEND_TEXT for True
+    SEND_TEXT = False          # Enviar mensagens de texto? (True/False)
+    SEND_MEDIA = True          # Enviar mídias (fotos, vídeos, documentos)? (True/False)
+    SEND_CAPTION = False       # Enviar legenda junto com a mídia? (True/False)
+    NEW_MESSAGE = None         # Mensagem padrão para substituir textos ou legendas
+    
 
 class EchoGroup(TelegramClient):
-    def __init__(self, client_name: str = 'client', path: str = 'downloads_dir'):
+    def __init__(self, client_name: str = 'client', path: str = 'downloads_dir', path_client: str = 'client'):
         load_dotenv()
         self.path = path
         self.api_id = int(os.getenv("API_ID"))
@@ -35,7 +38,8 @@ class EchoGroup(TelegramClient):
         self.grupos = GRUPOS
         self.grupo_destino = GRUPO_DESTINO
         os.makedirs(self.path, exist_ok=True)
-        super().__init__(os.path.join(self.path, client_name), self.api_id, self.api_hash, timeout=60)
+        os.makedirs(path_client, exist_ok=True)
+        super().__init__(os.path.join(path_client, client_name), self.api_id, self.api_hash, timeout=60)
 
     async def start(self):
         await super().start(phone=self.phone_number)
@@ -51,7 +55,7 @@ class EchoGroup(TelegramClient):
         async def handler(event):
             if event.media and Config.SEND_MEDIA:
                 if isinstance(event.media, (MessageMediaPhoto, DocumentAttributeVideo)):
-                    print("Mídia recebida:", event.media ,"de", event.chat.title,end='\r')
+                    print("Mídia recebida:", event.chat.title, end='\r', flush=True)
                     if not Config.SEND_CAPTION and Config.NEW_MESSAGE is None:
                        return await self.forward_messages(
                             self.grupo_destino,
